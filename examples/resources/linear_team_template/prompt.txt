@@ -1,0 +1,94 @@
+// cursor composer, claude-3.7-thinking
+
+can you create an additional terraform module that allows me to specify terraform templates like this?:
+
+resource "linear_template" "test_template" {
+  name         = "Tech Debt Template"
+  description  = "Template for tech debt issues"
+  template_data = jsonencode({
+    title = "Tech Debt: $1",
+    descriptionData = {
+      type = "doc",
+      content = [
+        {
+          type = "paragraph",
+          content = [
+            {
+              type = "text",
+              text = "Description of the tech debt issue."
+            }
+          ]
+        }
+      ]
+    },
+    priority = 0,
+    teamId = linear_team.test_team.id
+  })
+  team_id = linear_team.test_team.id
+}
+
+output "template_id" {
+  value = linear_template.test_template.id
+}
+
+here's how you query the linear API for a template:
+
+query Template($templateId: String!) {
+  template(id: $templateId) {
+    id
+    name
+    description
+    templateData
+    team {
+      id
+    }
+  }
+}
+
+variables:
+{
+  "templateId": null
+}
+
+
+here's how you mutate the linear API to add a template:
+
+mutation TemplateCreate($input: TemplateCreateInput!) {
+  templateCreate(input: $input) {
+    lastSyncId
+    success
+  }
+}
+
+variables:
+{
+  "input": {
+    "id": null,
+    "name": null,
+    "templateData": null,
+    "teamId": null,
+    "type": null,
+    "sortOrder": null,
+    "description": null
+  }
+}
+
+
+{
+  "query": "mutation TemplateCreate($templateCreateInput: TemplateCreateInput!) { templateCreate(input: $templateCreateInput) { lastSyncId } }",
+  "variables": {
+    "templateCreateInput": {
+      "id": "insert-fresh-uuid-here",
+      "name": "test template",
+      "templateData": "{\"title\":\"title\",\"descriptionData\":{\"type\":\"doc\",\"content\":[{\"type\":\"paragraph\",\"content\":[{\"type\":\"text\",\"text\":\"description\"}]}]},\"priority\":0,\"assigneeId\":\"insert-user-uuid-here",\"labelIds\":[\"insert-label-uuid-here"],\"stateId\":\"insert-state-uuid-here",\"projectId\":\"insert-project-uuid-here",\"teamId\":\"insert-team-uuid-here"}",
+      "teamId": "insert-team-uuid-here-idk-why-theres-two",
+      "type": "issue",
+      "sortOrder": -3816.52
+    }
+  },
+  "operationName": "TemplateCreate"
+}
+
+for the provider, modify internal/provider/provider.go to add, under NewTeamWorkflowResource, a NewTeamTemplateResource.
+
+in internal/provider/resource_team_template.go, copy the shape of resource_team_label.go, but modified for a team-specific template.
