@@ -114,10 +114,23 @@ func (p *LinearProvider) DataSources(ctx context.Context) []func() datasource.Da
 	}
 }
 
-func New(version string) func() provider.Provider {
-	return func() provider.Provider {
-		return &LinearProvider{
-			version: version,
+func New(version string) func() *schema.Provider {
+	return func() *schema.Provider {
+		p := &schema.Provider{
+			Schema: map[string]*schema.Schema{
+				// ... existing schema ...
+			},
+			ResourcesMap: map[string]*schema.Resource{
+				// ... existing resources ...
+				"linear_template": resourceLinearTemplate(),
+			},
+			DataSourcesMap: map[string]*schema.Resource{
+				// ... existing data sources ...
+			},
 		}
+
+		// ... existing code ...
+
+		return p
 	}
 }
