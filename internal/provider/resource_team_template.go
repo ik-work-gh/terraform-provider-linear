@@ -9,6 +9,7 @@ import (
 
 	"github.com/Khan/genqlient/graphql"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
+	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
@@ -251,35 +252,79 @@ func (r *TeamTemplateResource) Delete(ctx context.Context, req resource.DeleteRe
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
+
 func (r *TeamTemplateResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	resp.Diagnostics.AddError("Client Error", "ImportState not implemented")
-	return
-	/*
-	parts := strings.Split(req.ID, ":")
-
-	if len(parts) != 2 || parts[0] == "" || parts[1] == "" {
-		resp.Diagnostics.AddError(
-			"Unexpected Import Identifier",
-			fmt.Sprintf("Expected import identifier with format: template_name:team_key. Got: %q", req.ID),
-		)
-
-		return
-	}
-
-	response, err := findTemplate(ctx, *r.client, parts[0], parts[1])
-
-	if err != nil {
-		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to import team template, got error: %s", err))
-		return
-	}
-
-	if len(response.Templates.Nodes) != 1 {
-		resp.Diagnostics.AddError("Client Error", "Unable to import team template, got error: template not found")
-		return
-	}
-
-	data.Id = types.StringValue(response.Templates.Nodes[0].Id)
-
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
-	*/	
+	resource.ImportStatePassthroughID(ctx, path.Root("id"), req, resp)
 }
+
+// func (r *TeamTemplateResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+// 	var data *TeamTemplateResourceModel
+// 	// resp.Diagnostics.AddError("Client Error", "ImportState not implemented")
+// 	// make go error explosively
+// 	// panic("ImportState not implemented")
+// 	// return
+// 	// parts := strings.Split(req.ID, ":")
+
+// 	id_of_template_in_import_state := req.ID
+
+// 	response, err := getTemplate(ctx, *r.client, id_of_template_in_import_state)
+
+// 	if err != nil {
+// 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to import team template, got error: %s", err))
+// 		return
+// 	}
+
+
+// 	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("id"), response.Template.Id)...)
+
+// 	teamTemplate := response.Template
+
+// 	data.Id = types.StringValue(teamTemplate.Id)
+// 	// data.Name = types.StringPointerValue(teamTemplate.Name)
+// 	// data.TemplateData = types.StringPointerValue(teamTemplate.TemplateData)
+// 	// data.TeamId = types.StringValue(teamTemplate.Team.Id)
+// 	// data.Type = types.StringPointerValue(teamTemplate.Type)
+// 	// data.Description = types.StringValue(teamTemplate.Description)
+
+// 	// if teamTemplate.Description == "" {
+// 	// 	data.Description = types.StringNull()
+// 	// } else {
+// 	// 	data.Description = types.StringValue(teamTemplate.Description)
+// 	// }
+
+// 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+
+// 	// if len(parts) != 2 || parts[0] == "" || parts[1] == "" {
+// 	// 	resp.Diagnostics.AddError(
+// 	// 		"Unexpected Import Identifier",
+// 	// 		fmt.Sprintf("Expected import identifier with format: template_name:team_key. Got: %q", req.ID),
+// 	// 	)
+
+// 	// 	return
+// 	// }
+
+// 	// resp.Diagnostics.AddError(
+// 	// 	"debugging",
+// 	// 	// fmt.Sprintf("parts: %v", parts),
+// 	// 	// fmt.Sprintf("req: %v", req),
+// 	// 	fmt.Sprintf("id_of_template_in_import_state: %v", id_of_template_in_import_state),
+// 	// )
+
+// 	return
+// 	// panic("wip")
+// 	// response, err := getTemplate(ctx, *r.client, parts[0], parts[1])
+
+// 	// if err != nil {
+// 	// 	resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to import team template, got error: %s", err))
+// 	// 	return
+// 	// }
+
+// 	// if len(response.Templates.Nodes) != 1 {
+// 	// 	resp.Diagnostics.AddError("Client Error", "Unable to import team template, got error: template not found")
+// 	// 	return
+// 	// }
+
+// 	// data.Id = types.StringValue(response.Templates.Nodes[0].Id)
+
+// 	// resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+// }
