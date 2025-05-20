@@ -70,7 +70,7 @@ func (r *TeamTemplateResource) Schema(ctx context.Context, req resource.SchemaRe
 			},
 			"team_id": schema.StringAttribute{
 				MarkdownDescription: "Identifier of the team.",
-				Required:            true,
+				Optional:            true,
 				Validators: []validator.String{
 					stringvalidator.RegexMatches(uuidRegex(), "must be an uuid"),
 				},
@@ -149,6 +149,12 @@ func (r *TeamTemplateResource) Create(ctx context.Context, req resource.CreateRe
 		data.Description = types.StringNull()
 	} else {
 		data.Description = types.StringValue(teamTemplate.Description)
+	}
+
+	if teamTemplate.Team.Id == "" {
+		data.TeamId = types.StringNull()
+	} else {
+		data.TeamId = types.StringValue(teamTemplate.Team.Id)
 	}
 	
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
