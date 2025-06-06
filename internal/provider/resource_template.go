@@ -19,18 +19,18 @@ import (
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 )
 
-var _ resource.Resource = &TeamTemplateResource{}
-var _ resource.ResourceWithImportState = &TeamTemplateResource{}
+var _ resource.Resource = &TemplateResource{}
+var _ resource.ResourceWithImportState = &TemplateResource{}
 
-func NewTeamTemplateResource() resource.Resource {
-	return &TeamTemplateResource{}
+func NewTemplateResource() resource.Resource {
+	return &TemplateResource{}
 }
 
-type TeamTemplateResource struct {
+type TemplateResource struct {
 	client *graphql.Client
 }
 
-type TeamTemplateResourceModel struct {
+type TemplateResourceModel struct {
 	Id          types.String `tfsdk:"id"`
 	Name        types.String `tfsdk:"name"`
 	TemplateData types.String `tfsdk:"template_data"`
@@ -39,13 +39,13 @@ type TeamTemplateResourceModel struct {
 	Description types.String `tfsdk:"description"`
 }
 
-func (r *TeamTemplateResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
-	resp.TypeName = req.ProviderTypeName + "_team_template"
+func (r *TemplateResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
+	resp.TypeName = req.ProviderTypeName + "_template"
 }
 
-func (r *TeamTemplateResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
+func (r *TemplateResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
 	resp.Schema = schema.Schema{
-		MarkdownDescription: "Linear team template.",
+		MarkdownDescription: "Linear template resource. Can be used to create workspace-level templates or team-specific templates by optionally providing a team_id.",
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				MarkdownDescription: "Identifier of the template.",
@@ -69,7 +69,7 @@ func (r *TeamTemplateResource) Schema(ctx context.Context, req resource.SchemaRe
 				},
 			},
 			"team_id": schema.StringAttribute{
-				MarkdownDescription: "Identifier of the team.",
+				MarkdownDescription: "Identifier of the team. If not provided, creates a workspace-level template.",
 				Optional:            true,
 				Validators: []validator.String{
 					stringvalidator.RegexMatches(uuidRegex(), "must be an uuid"),
@@ -90,7 +90,7 @@ func (r *TeamTemplateResource) Schema(ctx context.Context, req resource.SchemaRe
 	}
 }
 
-func (r *TeamTemplateResource) Configure(ctx context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
+func (r *TemplateResource) Configure(ctx context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
 	// Prevent panic if the provider has not been configured.
 	if req.ProviderData == nil {
 		return
@@ -110,8 +110,8 @@ func (r *TeamTemplateResource) Configure(ctx context.Context, req resource.Confi
 	r.client = client
 }
 
-func (r *TeamTemplateResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
-	var data *TeamTemplateResourceModel
+func (r *TemplateResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
+	var data *TemplateResourceModel
 
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 
@@ -130,39 +130,39 @@ func (r *TeamTemplateResource) Create(ctx context.Context, req resource.CreateRe
 	response, err := templateCreate(ctx, *r.client, input)
 
 	if err != nil {
-		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to create team template, got error: %s", err))
+		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to create template, got error: %s", err))
 		return
 	}
 
-	tflog.Info(ctx, "created a team template")
+	tflog.Info(ctx, "created a template")
 
-	teamTemplate := response.TemplateCreate.Template
+	template := response.TemplateCreate.Template
 
-	data.Id = types.StringValue(teamTemplate.Id)
-	data.Name = types.StringPointerValue(teamTemplate.Name)
-	data.TemplateData = types.StringPointerValue(teamTemplate.TemplateData)
-	data.TeamId = types.StringValue(teamTemplate.Team.Id)
-	data.Type = types.StringPointerValue(teamTemplate.Type)
-	data.Description = types.StringValue(teamTemplate.Description)
+	data.Id = types.StringValue(template.Id)
+	data.Name = types.StringPointerValue(template.Name)
+	data.TemplateData = types.StringPointerValue(template.TemplateData)
+	data.TeamId = types.StringValue(template.Team.Id)
+	data.Type = types.StringPointerValue(template.Type)
+	data.Description = types.StringValue(template.Description)
 
-	if teamTemplate.Description == "" {
+	if template.Description == "" {
 		data.Description = types.StringNull()
 	} else {
-		data.Description = types.StringValue(teamTemplate.Description)
+		data.Description = types.StringValue(template.Description)
 	}
 
-	if teamTemplate.Team.Id == "" {
+	if template.Team.Id == "" {
 		data.TeamId = types.StringNull()
 	} else {
-		data.TeamId = types.StringValue(teamTemplate.Team.Id)
+		data.TeamId = types.StringValue(template.Team.Id)
 	}
 	
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *TeamTemplateResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
+func (r *TemplateResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
 
-	var data *TeamTemplateResourceModel
+	var data *TemplateResourceModel
 
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 
@@ -173,30 +173,30 @@ func (r *TeamTemplateResource) Read(ctx context.Context, req resource.ReadReques
 	response, err := getTemplate(ctx, *r.client, data.Id.ValueString())
 
 	if err != nil {
-		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to read team template, got error: %s", err))
+		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to read template, got error: %s", err))
 		return
 	}
 
-	teamTemplate := response.Template
+	template := response.Template
 
-	data.Id = types.StringValue(teamTemplate.Id)
-	data.Name = types.StringPointerValue(teamTemplate.Name)
-	data.TemplateData = types.StringPointerValue(teamTemplate.TemplateData)
-	data.TeamId = types.StringValue(teamTemplate.Team.Id)
-	data.Type = types.StringPointerValue(teamTemplate.Type)
-	data.Description = types.StringValue(teamTemplate.Description)
+	data.Id = types.StringValue(template.Id)
+	data.Name = types.StringPointerValue(template.Name)
+	data.TemplateData = types.StringPointerValue(template.TemplateData)
+	data.TeamId = types.StringValue(template.Team.Id)
+	data.Type = types.StringPointerValue(template.Type)
+	data.Description = types.StringValue(template.Description)
 
-	if teamTemplate.Description == "" {
+	if template.Description == "" {
 		data.Description = types.StringNull()
 	} else {
-		data.Description = types.StringValue(teamTemplate.Description)
+		data.Description = types.StringValue(template.Description)
 	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *TeamTemplateResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
-	var data *TeamTemplateResourceModel
+func (r *TemplateResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
+	var data *TemplateResourceModel
 
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 
@@ -214,31 +214,31 @@ func (r *TeamTemplateResource) Update(ctx context.Context, req resource.UpdateRe
 	response, err := templateUpdate(ctx, *r.client, input, data.Id.ValueString())
 
 	if err != nil {
-		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to update team template, got error: %s", err))
+		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to update template, got error: %s", err))
 		return
 	}
 
-	tflog.Trace(ctx, "updated a team template")
+	tflog.Trace(ctx, "updated a template")
 
-	teamTemplate := response.TemplateUpdate.Template
+	template := response.TemplateUpdate.Template
 
-	data.Id = types.StringValue(teamTemplate.Id)
-	data.Name = types.StringPointerValue(teamTemplate.Name)
-	data.TemplateData = types.StringPointerValue(teamTemplate.TemplateData)
-	data.TeamId = types.StringValue(teamTemplate.Team.Id)
-	data.Description = types.StringValue(teamTemplate.Description)
+	data.Id = types.StringValue(template.Id)
+	data.Name = types.StringPointerValue(template.Name)
+	data.TemplateData = types.StringPointerValue(template.TemplateData)
+	data.TeamId = types.StringValue(template.Team.Id)
+	data.Description = types.StringValue(template.Description)
 
-	if teamTemplate.Description == "" {
+	if template.Description == "" {
 		data.Description = types.StringNull()
 	} else {
-		data.Description = types.StringValue(teamTemplate.Description)
+		data.Description = types.StringValue(template.Description)
 	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *TeamTemplateResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
-	var data *TeamTemplateResourceModel
+func (r *TemplateResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
+	var data *TemplateResourceModel
 
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 
@@ -249,15 +249,15 @@ func (r *TeamTemplateResource) Delete(ctx context.Context, req resource.DeleteRe
 	_, err := templateDelete(ctx, *r.client, data.Id.ValueString())
 
 	if err != nil {
-		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to delete team template, got error: %s", err))
+		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to delete template, got error: %s", err))
 		return
 	}
 
-	tflog.Trace(ctx, "deleted a team template")
+	tflog.Trace(ctx, "deleted a template")
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *TeamTemplateResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+func (r *TemplateResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	resource.ImportStatePassthroughID(ctx, path.Root("id"), req, resp)
 }
