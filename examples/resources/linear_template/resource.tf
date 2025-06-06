@@ -4,8 +4,9 @@ variable "your_team_id" {
   default     = "uuid-goes-here"
 }
 
-resource "linear_team_template" "test_template" {
-  name = "Example template"
+# Team-specific template
+resource "linear_template" "team_template" {
+  name = "Team Example template"
   # description = "Test Description" # optional
   template_data = jsonencode({
     "title" = "Test Title"
@@ -16,18 +17,26 @@ resource "linear_team_template" "test_template" {
   type    = "issue"
 }
 
+# Workspace-level template (no team_id specified)
+resource "linear_template" "workspace_template" {
+  name = "Workspace Example template"
+  template_data = jsonencode({
+    "title" = "Workspace Template"
+  })
+  type = "issue"
+}
+
 # import example
 import {
-  to = linear_team_template.test_template_2
+  to = linear_template.test_template_2
   id = "uuid-of-template-in-linear" # use graphql query: templates { id name}
 }
 
 # import example
 # these fields will overwrite whatever's in the template that pre-exists in linear
-resource "linear_team_template" "test_template_2" {
+resource "linear_template" "test_template_2" {
   name          = "Example template 2"
   template_data = "this will overwrite the template data in linear"
   team_id       = var.your_team_id
   type          = "issue"
 }
-
