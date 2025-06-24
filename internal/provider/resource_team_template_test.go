@@ -7,8 +7,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 )
 
-// TF_ACC=1 go test ./... -run=TestAccTeamTemplateResourceDefault
-
 func TestAccTeamTemplateResourceDefault(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { testAccPreCheck(t) },

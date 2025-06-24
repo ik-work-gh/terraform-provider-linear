@@ -3,9 +3,6 @@ package provider
 import (
 	"context"
 	"fmt"
-	// "math/big"
-	// "strings"
-	// "encoding/json"
 
 	"github.com/Khan/genqlient/graphql"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
@@ -45,7 +42,7 @@ func (r *TemplateResource) Metadata(ctx context.Context, req resource.MetadataRe
 
 func (r *TemplateResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
 	resp.Schema = schema.Schema{
-		MarkdownDescription: "Linear template resource. Can be used to create workspace-level templates or team-specific templates by optionally providing a team_id.",
+		MarkdownDescription: "Linear template resource.",
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				MarkdownDescription: "Identifier of the template.",
@@ -79,7 +76,7 @@ func (r *TemplateResource) Schema(ctx context.Context, req resource.SchemaReques
 				MarkdownDescription: "Type of the template.",
 				Required:            true,
 				Validators: []validator.String{
-					stringvalidator.UTF8LengthAtLeast(1),
+					stringvalidator.OneOf("issue", "project", "document"),
 				},
 			},
 			"description": schema.StringAttribute{
@@ -134,7 +131,7 @@ func (r *TemplateResource) Create(ctx context.Context, req resource.CreateReques
 		return
 	}
 
-	tflog.Info(ctx, "created a template")
+	tflog.Trace(ctx, "created a template")
 
 	template := response.TemplateCreate.Template
 
