@@ -1,7 +1,7 @@
-# @genqlient(for: "Template.name", pointer: true)
-# @genqlient(for: "Template.type", pointer: true)
-# @genqlient(for: "Template.templateData", pointer: true)
-fragment TemplateFragment on Template {
+# @genqlient(for: "Template.name")
+# @genqlient(for: "Template.type")
+# @genqlient(for: "Template.templateData")
+fragment Template on Template {
   id
   team {
     id
@@ -18,12 +18,12 @@ query getTemplate($id: String!) {
   }
 }
 
-# @genqlient(for: "TemplateCreateInput.id", omitempty: true, pointer: true)
-# @genqlient(for: "TemplateCreateInput.teamId", omitempty: true, pointer: true)
+# @genqlient(for: "TemplateCreateInput.id", pointer: true)
+# @genqlient(for: "TemplateCreateInput.teamId", pointer: true)
 # @genqlient(for: "TemplateCreateInput.name", pointer: true)
-# @genqlient(for: "TemplateCreateInput.description", omitempty:true, pointer: true)
+# @genqlient(for: "TemplateCreateInput.description", pointer: true)
 # @genqlient(for: "TemplateCreateInput.type", pointer: true)
-# @genqlient(for: "TemplateCreateInput.templateData", pointer: true)
+# @genqlient(for: "TemplateCreateInput.data", pointer: true)
 mutation templateCreate(
   $input: TemplateCreateInput!
 ) {

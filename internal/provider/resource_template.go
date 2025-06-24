@@ -30,7 +30,7 @@ type TemplateResource struct {
 type TemplateResourceModel struct {
 	Id          types.String `tfsdk:"id"`
 	Name        types.String `tfsdk:"name"`
-	TemplateData types.String `tfsdk:"template_data"`
+	Data types.String `tfsdk:"data"`
 	TeamId      types.String `tfsdk:"team_id"`
 	Type        types.String `tfsdk:"type"`
 	Description types.String `tfsdk:"description"`
@@ -58,7 +58,7 @@ func (r *TemplateResource) Schema(ctx context.Context, req resource.SchemaReques
 					stringvalidator.UTF8LengthAtLeast(1),
 				},
 			},
-			"template_data": schema.StringAttribute{
+			"data": schema.StringAttribute{
 				MarkdownDescription: "Template data of the template.",
 				Required:            true,
 				Validators: []validator.String{
@@ -118,7 +118,7 @@ func (r *TemplateResource) Create(ctx context.Context, req resource.CreateReques
 
 	input := TemplateCreateInput{
 		Name:         data.Name.ValueStringPointer(),
-		TemplateData: data.TemplateData.ValueStringPointer(),
+		Data: data.Data.ValueStringPointer(),
 		TeamId:       data.TeamId.ValueStringPointer(),
 		Type:         data.Type.ValueStringPointer(),
 		Description:  data.Description.ValueStringPointer(),
@@ -137,23 +137,11 @@ func (r *TemplateResource) Create(ctx context.Context, req resource.CreateReques
 
 	data.Id = types.StringValue(template.Id)
 	data.Name = types.StringPointerValue(template.Name)
-	data.TemplateData = types.StringPointerValue(template.TemplateData)
+	data.Data = types.StringPointerValue(template.Data)
 	data.TeamId = types.StringValue(template.Team.Id)
 	data.Type = types.StringPointerValue(template.Type)
 	data.Description = types.StringValue(template.Description)
 
-	if template.Description == "" {
-		data.Description = types.StringNull()
-	} else {
-		data.Description = types.StringValue(template.Description)
-	}
-
-	if template.Team.Id == "" {
-		data.TeamId = types.StringNull()
-	} else {
-		data.TeamId = types.StringValue(template.Team.Id)
-	}
-	
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
@@ -178,7 +166,7 @@ func (r *TemplateResource) Read(ctx context.Context, req resource.ReadRequest, r
 
 	data.Id = types.StringValue(template.Id)
 	data.Name = types.StringPointerValue(template.Name)
-	data.TemplateData = types.StringPointerValue(template.TemplateData)
+	data.Data = types.StringPointerValue(template.Data)
 	data.TeamId = types.StringValue(template.Team.Id)
 	data.Type = types.StringPointerValue(template.Type)
 	data.Description = types.StringValue(template.Description)
@@ -203,7 +191,7 @@ func (r *TemplateResource) Update(ctx context.Context, req resource.UpdateReques
 
 	input := TemplateUpdateInput{
 		Name:        data.Name.ValueString(),
-		TemplateData: data.TemplateData.ValueString(),
+		Data: data.Data.ValueString(),
 		TeamId:      data.TeamId.ValueString(),
 		Description: data.Description.ValueString(),
 	}
@@ -221,7 +209,7 @@ func (r *TemplateResource) Update(ctx context.Context, req resource.UpdateReques
 
 	data.Id = types.StringValue(template.Id)
 	data.Name = types.StringPointerValue(template.Name)
-	data.TemplateData = types.StringPointerValue(template.TemplateData)
+	data.Data = types.StringPointerValue(template.Data)
 	data.TeamId = types.StringValue(template.Team.Id)
 	data.Description = types.StringValue(template.Description)
 
