@@ -14,7 +14,7 @@ fragment Template on Template {
   
 query getTemplate($id: String!) {
   template(id: $id) {
-    ...TemplateFragment
+    ...Template
   }
 }
 
@@ -29,7 +29,7 @@ mutation templateCreate(
 ) {
   templateCreate(input: $input) {
     template {
-      ...TemplateFragment
+      ...Template
     }
   }
 }
@@ -40,7 +40,7 @@ mutation templateUpdate(
 ) {
   templateUpdate(input: $input, id: $id) {
     template {
-      ...TemplateFragment
+      ...Template
     }
   }
 }
