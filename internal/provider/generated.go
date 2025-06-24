@@ -969,39 +969,39 @@ func (v *TeamWorkflowStartWorkflowState) GetId() string { return v.Id }
 
 type TemplateCreateInput struct {
 	// The identifier in UUID v4 format. If none is provided, the backend will generate one.
-	Id *string `json:"id,omitempty"`
+	Id string `json:"id"`
 	// The template type, e.g. 'issue'.
-	Type *string `json:"type"`
+	Type string `json:"type"`
 	// The identifier or key of the team associated with the template. If not given,
 	// the template will be shared across all teams.
-	TeamId *string `json:"teamId,omitempty"`
+	TeamId string `json:"teamId"`
 	// The template name.
-	Name *string `json:"name"`
+	Name string `json:"name"`
 	// The template description.
-	Description *string `json:"description,omitempty"`
+	Description string `json:"description"`
 	// The template data as JSON encoded attributes of the type of entity, such as an issue.
-	TemplateData *string `json:"templateData"`
+	TemplateData string `json:"templateData"`
 	// The position of the template in the templates list.
 	SortOrder float64 `json:"sortOrder"`
 }
 
 // GetId returns TemplateCreateInput.Id, and is useful for accessing the field via an interface.
-func (v *TemplateCreateInput) GetId() *string { return v.Id }
+func (v *TemplateCreateInput) GetId() string { return v.Id }
 
 // GetType returns TemplateCreateInput.Type, and is useful for accessing the field via an interface.
-func (v *TemplateCreateInput) GetType() *string { return v.Type }
+func (v *TemplateCreateInput) GetType() string { return v.Type }
 
 // GetTeamId returns TemplateCreateInput.TeamId, and is useful for accessing the field via an interface.
-func (v *TemplateCreateInput) GetTeamId() *string { return v.TeamId }
+func (v *TemplateCreateInput) GetTeamId() string { return v.TeamId }
 
 // GetName returns TemplateCreateInput.Name, and is useful for accessing the field via an interface.
-func (v *TemplateCreateInput) GetName() *string { return v.Name }
+func (v *TemplateCreateInput) GetName() string { return v.Name }
 
 // GetDescription returns TemplateCreateInput.Description, and is useful for accessing the field via an interface.
-func (v *TemplateCreateInput) GetDescription() *string { return v.Description }
+func (v *TemplateCreateInput) GetDescription() string { return v.Description }
 
 // GetTemplateData returns TemplateCreateInput.TemplateData, and is useful for accessing the field via an interface.
-func (v *TemplateCreateInput) GetTemplateData() *string { return v.TemplateData }
+func (v *TemplateCreateInput) GetTemplateData() string { return v.TemplateData }
 
 // GetSortOrder returns TemplateCreateInput.SortOrder, and is useful for accessing the field via an interface.
 func (v *TemplateCreateInput) GetSortOrder() float64 { return v.SortOrder }
@@ -1016,13 +1016,13 @@ type TemplateFragment struct {
 	// The team that the template is associated with. If null, the template is global to the workspace.
 	Team TemplateFragmentTeam `json:"team"`
 	// The name of the template.
-	Name *string `json:"name"`
+	Name string `json:"name"`
 	// Template description.
 	Description string `json:"description"`
 	// The entity type this template is for.
-	Type *string `json:"type"`
+	Type string `json:"type"`
 	// Template data.
-	TemplateData *string `json:"templateData"`
+	TemplateData string `json:"templateData"`
 }
 
 // GetId returns TemplateFragment.Id, and is useful for accessing the field via an interface.
@@ -1032,16 +1032,16 @@ func (v *TemplateFragment) GetId() string { return v.Id }
 func (v *TemplateFragment) GetTeam() TemplateFragmentTeam { return v.Team }
 
 // GetName returns TemplateFragment.Name, and is useful for accessing the field via an interface.
-func (v *TemplateFragment) GetName() *string { return v.Name }
+func (v *TemplateFragment) GetName() string { return v.Name }
 
 // GetDescription returns TemplateFragment.Description, and is useful for accessing the field via an interface.
 func (v *TemplateFragment) GetDescription() string { return v.Description }
 
 // GetType returns TemplateFragment.Type, and is useful for accessing the field via an interface.
-func (v *TemplateFragment) GetType() *string { return v.Type }
+func (v *TemplateFragment) GetType() string { return v.Type }
 
 // GetTemplateData returns TemplateFragment.TemplateData, and is useful for accessing the field via an interface.
-func (v *TemplateFragment) GetTemplateData() *string { return v.TemplateData }
+func (v *TemplateFragment) GetTemplateData() string { return v.TemplateData }
 
 // TemplateFragmentTeam includes the requested fields of the GraphQL type Team.
 // The GraphQL type's documentation follows.
@@ -2683,16 +2683,16 @@ func (v *getTemplateTemplate) GetId() string { return v.TemplateFragment.Id }
 func (v *getTemplateTemplate) GetTeam() TemplateFragmentTeam { return v.TemplateFragment.Team }
 
 // GetName returns getTemplateTemplate.Name, and is useful for accessing the field via an interface.
-func (v *getTemplateTemplate) GetName() *string { return v.TemplateFragment.Name }
+func (v *getTemplateTemplate) GetName() string { return v.TemplateFragment.Name }
 
 // GetDescription returns getTemplateTemplate.Description, and is useful for accessing the field via an interface.
 func (v *getTemplateTemplate) GetDescription() string { return v.TemplateFragment.Description }
 
 // GetType returns getTemplateTemplate.Type, and is useful for accessing the field via an interface.
-func (v *getTemplateTemplate) GetType() *string { return v.TemplateFragment.Type }
+func (v *getTemplateTemplate) GetType() string { return v.TemplateFragment.Type }
 
 // GetTemplateData returns getTemplateTemplate.TemplateData, and is useful for accessing the field via an interface.
-func (v *getTemplateTemplate) GetTemplateData() *string { return v.TemplateFragment.TemplateData }
+func (v *getTemplateTemplate) GetTemplateData() string { return v.TemplateFragment.TemplateData }
 
 func (v *getTemplateTemplate) UnmarshalJSON(b []byte) error {
 
@@ -2724,13 +2724,13 @@ type __premarshalgetTemplateTemplate struct {
 
 	Team TemplateFragmentTeam `json:"team"`
 
-	Name *string `json:"name"`
+	Name string `json:"name"`
 
 	Description string `json:"description"`
 
-	Type *string `json:"type"`
+	Type string `json:"type"`
 
-	TemplateData *string `json:"templateData"`
+	TemplateData string `json:"templateData"`
 }
 
 func (v *getTemplateTemplate) MarshalJSON() ([]byte, error) {
@@ -3025,7 +3025,7 @@ func (v *templateCreateTemplateCreateTemplatePayloadTemplate) GetTeam() Template
 }
 
 // GetName returns templateCreateTemplateCreateTemplatePayloadTemplate.Name, and is useful for accessing the field via an interface.
-func (v *templateCreateTemplateCreateTemplatePayloadTemplate) GetName() *string {
+func (v *templateCreateTemplateCreateTemplatePayloadTemplate) GetName() string {
 	return v.TemplateFragment.Name
 }
 
@@ -3035,12 +3035,12 @@ func (v *templateCreateTemplateCreateTemplatePayloadTemplate) GetDescription() s
 }
 
 // GetType returns templateCreateTemplateCreateTemplatePayloadTemplate.Type, and is useful for accessing the field via an interface.
-func (v *templateCreateTemplateCreateTemplatePayloadTemplate) GetType() *string {
+func (v *templateCreateTemplateCreateTemplatePayloadTemplate) GetType() string {
 	return v.TemplateFragment.Type
 }
 
 // GetTemplateData returns templateCreateTemplateCreateTemplatePayloadTemplate.TemplateData, and is useful for accessing the field via an interface.
-func (v *templateCreateTemplateCreateTemplatePayloadTemplate) GetTemplateData() *string {
+func (v *templateCreateTemplateCreateTemplatePayloadTemplate) GetTemplateData() string {
 	return v.TemplateFragment.TemplateData
 }
 
@@ -3074,13 +3074,13 @@ type __premarshaltemplateCreateTemplateCreateTemplatePayloadTemplate struct {
 
 	Team TemplateFragmentTeam `json:"team"`
 
-	Name *string `json:"name"`
+	Name string `json:"name"`
 
 	Description string `json:"description"`
 
-	Type *string `json:"type"`
+	Type string `json:"type"`
 
-	TemplateData *string `json:"templateData"`
+	TemplateData string `json:"templateData"`
 }
 
 func (v *templateCreateTemplateCreateTemplatePayloadTemplate) MarshalJSON() ([]byte, error) {
@@ -3167,7 +3167,7 @@ func (v *templateUpdateTemplateUpdateTemplatePayloadTemplate) GetTeam() Template
 }
 
 // GetName returns templateUpdateTemplateUpdateTemplatePayloadTemplate.Name, and is useful for accessing the field via an interface.
-func (v *templateUpdateTemplateUpdateTemplatePayloadTemplate) GetName() *string {
+func (v *templateUpdateTemplateUpdateTemplatePayloadTemplate) GetName() string {
 	return v.TemplateFragment.Name
 }
 
@@ -3177,12 +3177,12 @@ func (v *templateUpdateTemplateUpdateTemplatePayloadTemplate) GetDescription() s
 }
 
 // GetType returns templateUpdateTemplateUpdateTemplatePayloadTemplate.Type, and is useful for accessing the field via an interface.
-func (v *templateUpdateTemplateUpdateTemplatePayloadTemplate) GetType() *string {
+func (v *templateUpdateTemplateUpdateTemplatePayloadTemplate) GetType() string {
 	return v.TemplateFragment.Type
 }
 
 // GetTemplateData returns templateUpdateTemplateUpdateTemplatePayloadTemplate.TemplateData, and is useful for accessing the field via an interface.
-func (v *templateUpdateTemplateUpdateTemplatePayloadTemplate) GetTemplateData() *string {
+func (v *templateUpdateTemplateUpdateTemplatePayloadTemplate) GetTemplateData() string {
 	return v.TemplateFragment.TemplateData
 }
 
@@ -3216,13 +3216,13 @@ type __premarshaltemplateUpdateTemplateUpdateTemplatePayloadTemplate struct {
 
 	Team TemplateFragmentTeam `json:"team"`
 
-	Name *string `json:"name"`
+	Name string `json:"name"`
 
 	Description string `json:"description"`
 
-	Type *string `json:"type"`
+	Type string `json:"type"`
 
-	TemplateData *string `json:"templateData"`
+	TemplateData string `json:"templateData"`
 }
 
 func (v *templateUpdateTemplateUpdateTemplatePayloadTemplate) MarshalJSON() ([]byte, error) {

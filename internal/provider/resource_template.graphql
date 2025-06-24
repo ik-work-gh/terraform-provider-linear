@@ -1,7 +1,4 @@
-# @genqlient(for: "Template.name")
-# @genqlient(for: "Template.type")
-# @genqlient(for: "Template.templateData")
-fragment Template on Template {
+fragment TemplateFragment on Template {
   id
   team {
     id
@@ -14,22 +11,16 @@ fragment Template on Template {
   
 query getTemplate($id: String!) {
   template(id: $id) {
-    ...Template
+    ...TemplateFragment
   }
 }
 
-# @genqlient(for: "TemplateCreateInput.id", pointer: true)
-# @genqlient(for: "TemplateCreateInput.teamId", pointer: true)
-# @genqlient(for: "TemplateCreateInput.name", pointer: true)
-# @genqlient(for: "TemplateCreateInput.description", pointer: true)
-# @genqlient(for: "TemplateCreateInput.type", pointer: true)
-# @genqlient(for: "TemplateCreateInput.data", pointer: true)
 mutation templateCreate(
   $input: TemplateCreateInput!
 ) {
   templateCreate(input: $input) {
     template {
-      ...Template
+      ...TemplateFragment
     }
   }
 }
@@ -40,7 +31,7 @@ mutation templateUpdate(
 ) {
   templateUpdate(input: $input, id: $id) {
     template {
-      ...Template
+      ...TemplateFragment
     }
   }
 }
